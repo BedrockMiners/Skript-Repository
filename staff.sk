@@ -1,0 +1,11 @@
+# Bedrock Miners Staff Tools
+
+
+# Rename
+command /rename [<string>] :
+    permission: staff.rename, staff.*
+    trigger:
+        if arg 1 is not set:
+            send "&cUsage: &6/rename <name>"
+        if arg 1 is set:
+            set name of player's held item to colored arg-1
