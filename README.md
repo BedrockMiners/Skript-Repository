@@ -5,3 +5,5 @@ Request A skript:
 
 Contact us on discord! 
 https://discord.gg/fWsnjvECzK
+
+Goodbye!
