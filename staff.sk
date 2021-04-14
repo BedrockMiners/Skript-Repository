@@ -9,3 +9,23 @@ command /rename [<string>] :
             send "&cUsage: &6/rename <name>"
         if arg 1 is set:
             set name of player's held item to colored arg-1
+            
+# Blocks Reset
+
+on place:
+    add block to {placedblocks::*}
+
+command /blocks:
+    permission: staff.blocks, staff.*
+    trigger:
+        send "%{placedblocks::*}%"
+
+command /blocksreset:
+    permission: staff.blocks, staff.*
+    trigger:
+        send "&c&l>> &7All placed blocks reset."
+        loop blocks in radius 350 around player:
+            set {_block} to a random element out of blocks in radius 350 of player
+            if {_block} is {placedblocks::*}:
+                set block {_block} to air
+        stop
