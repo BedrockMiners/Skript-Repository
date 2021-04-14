@@ -47,3 +47,16 @@ command /vbm [<string>] [<player>]:
                 add 1 to {boosts.%arg-2's uuid%}
                 add 1 to {boosts}
                 add 75000 to player's balance
+                
+                
+# Broadcast
+
+command /broadcast [<string>]:
+    permission: staff.alert, staff.*
+    aliases: bc, announce
+    trigger:
+        if arg 1 is not set:
+            send "&cNo arguments!"
+        if arg 1 is set:
+            loop all players:
+                send "&8&l(&3&lB&b&lM&8&l) &3%arg-1%" to loop-player
