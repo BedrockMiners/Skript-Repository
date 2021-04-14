@@ -37,32 +37,11 @@ on respawn:
     teleport player to location at -50, 7, -50 in world "Bedrock"
 
 
-command /broadcast [<string>]:
-    permission: staff.alert, staff.*
-    aliases: bc, announce
-    trigger:
-        if arg 1 is not set:
-            send "&cNo arguments!"
-        if arg 1 is set:
-            loop all players:
-                send "&8&l(&3&lB&b&lM&8&l) &3%arg-1%" to loop-player
 
 
 
-command /vbm [<string>] [<player>]:
-    permission: staff.vbm, staff.*
-    trigger:
-        if arg 1 is "vote":
-            if arg 2 is set:
-                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bvoted! They recieved their rewards."
-                add 1 to {votes.%arg-2's uuid%}
-                add 750 to player's balance
-        if arg 1 is "booster":
-            if arg 2 is set:
-                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bboosted! They recieved their rewards."
-                add 1 to {boosts.%arg-2's uuid%}
-                add 1 to {boosts}
-                add 75000 to player's balance
+
+
 
 command /rules:
     trigger:
@@ -82,51 +61,11 @@ command /rules:
         send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &8&l(&3&lB&b&lM&8&l) &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----"
 
 
-#----------------------
-
-
-
-on place:
-    add block to {placedblocks::*}
-
-command /blocks:
-    permission: staff.blocks, staff.*
-    trigger:
-        send "%{placedblocks::*}%"
-
-command /blocksreset:
-    permission: staff.blocks, staff.*
-    trigger:
-        send "&c&l>> &7All placed blocks reset."
-        loop blocks in radius 350 around player:
-            set {_block} to a random element out of blocks in radius 350 of player
-            if {_block} is {placedblocks::*}:
-                set block {_block} to air
-        stop
 
 command /discord:
     trigger:
         json("%player%", "&a&lCLICK HERE||url:https://discord.gg/vMkjKWttNW")
 
-command /warn [<offline player>] [<string>]:
-    permission: staff.warn, staff.*
-    trigger:
-        if arg 1 is not set:
-            send "&a"
-            send " &d&o• &d/warn <player> <reasoning> &7&oWarns a player due to bad acts"
-            send "&a"
-        if arg 1 is a player:
-            if arg 1 is offline:
-                send " &d&o• This player is offline!"
-            if arg 1 is online:
-                if arg 2 is not set:
-                    send " &d&o• Please specify some arguments for %arg-1%'s warn reason!"
-                if arg 2 is set:
-                    make console execute command "/broadcast %arg-1% has been warned due to: %arg-2%"
-                    send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &3&lNOT&b&lICE &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----" to arg-1
-                    send "&fYou have been warned by an admin due to &b%arg-2%&f." to arg-1
-                    send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &8&l(&3&lB&b&lM&8&l) &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----" to arg-1
-                    add 1 to {warns.%arg-1's uuid%}
 
 on load:
     broadcast "&b&lCORE &f| &bReloading."
