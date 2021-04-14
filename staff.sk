@@ -10,7 +10,7 @@ command /rename [<string>] :
         if arg 1 is set:
             set name of player's held item to colored arg-1
             
-# Blocks Reset
+ # Blocks Reset
 
 on place:
     add block to {placedblocks::*}
@@ -29,3 +29,21 @@ command /blocksreset:
             if {_block} is {placedblocks::*}:
                 set block {_block} to air
         stop
+        
+        
+# Warn System
+
+command /vbm [<string>] [<player>]:
+    permission: staff.vbm, staff.*
+    trigger:
+        if arg 1 is "vote":
+            if arg 2 is set:
+                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bvoted! They recieved their rewards."
+                add 1 to {votes.%arg-2's uuid%}
+                add 750 to player's balance
+        if arg 1 is "booster":
+            if arg 2 is set:
+                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bboosted! They recieved their rewards."
+                add 1 to {boosts.%arg-2's uuid%}
+                add 1 to {boosts}
+                add 75000 to player's balance
