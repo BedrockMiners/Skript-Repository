@@ -1,0 +1,100 @@
+options:
+	prefix: &c&lGANGS 
+	prefix_end: &d&o•
+	main_color: &d
+	second_color: &7
+
+command /gang [<text>] [<text>]:
+    aliases: gangs
+    trigger:
+        if arg-1 is not set:
+            send ""
+            send "{@prefix_end} {@main_color}/gang create <name> {@second_color}&oCreates a gang."
+            send "{@prefix_end} {@main_color}/gang invite <player> {@second_color}&oInvites a player to your gang"
+            send "{@prefix_end} {@main_color}/gang join <name> {@second_color}&oAllows you to join gangs."
+            send "{@prefix_end} {@main_color}/gang leave {@second_color}&oAllows you to leave your gang."
+            send "{@prefix_end} {@main_color}/gang chat {@second_color}&oToggles gang chat mode."
+            send "{@prefix_end} {@main_color}/gang kick <player> {@second_color}&oKicks a player from your gang."
+            send "{@prefix_end} {@main_color}/gang sethome {@second_color}&oSets a gang home for everyone."
+            send "{@prefix_end} {@main_color}/gang home {@second_color}&oTeleports players to your gang home."
+            send ""
+        else:
+            if arg-1 is "create" or "disband" or "join" or "leave" or "chat" or "invite" or "info" or "kick" or "home" or "sethome":
+                if arg-1 is "create":
+                    if arg-2 is not set:
+                        send "{@prefix} {@prefix_end} {@main_color}/gang create <name>"
+                    else:
+                        if length of arg-2 is greater than 10:
+                            send "{@prefix} {@prefix_end} {@second_color}Gang names can only be up to {@main_color}8 {@second_color}characters."
+                            stop
+                        if arg 2 matches "[a-zA-Z]+":
+                            if {clans::%player%} is not set:
+                                loop {clans::*}:
+                                    if loop-value is argument 2:
+                                        set {_n} to true
+                                if {_n} is not set:
+                                    set {clans::%player%} to arg-2
+                                    set {clans::%{clans::%player%}%::owner} to the player
+                                    add player to {members::%player%::*}
+                                    send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}has created a gang named {@main_color}%arg-2%{@second_color}!"
+                                else:
+                                    send "{@prefix} {@prefix_end} {@second_color}A gang with that name already exists!"
+                            else:
+                                send "{@prefix} {@prefix_end} {@second_color}You're already in a gang!"
+                        else:
+                            send "{@prefix} {@prefix_end} {@second_color}Name must be {@main_color}alphabetical."
+                            stop
+                if arg-1 is "disband":
+                    if {clans::%player%} is not set:
+                        send "{@prefix} {@prefix_end} {@second_color}You're not in a gang!"
+                    else:
+                        if {clans::%{clans::%player%}%::owner} is not the player:
+                            send "{@prefix} {@prefix_end} {@second_color}You aren't the leader of your gang!"
+                        else:
+                            send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}has disbanded the {@main_color}%{clans::%player%}% {@second_color}gang!"
+                            loop {invited::%{clans::%player%}%::*}:
+                                remove {clans::%player%} from {clansinvites::%loop-value%::*}
+                            loop {members::%{clans::%{clans::%player%}%::owner}%::*}:
+                                delete {clanchat::%loop-value%}
+                                delete {clans::%loop-value%}
+                                remove loop-value from {members::%player%::*}
+                            delete {clans::%{clans::%player%}%::owner}
+                            remove player from {members::%player%::*}
+                if arg-1 is "leave":
+                    if {clans::%player%} is not set:
+                        send "{@prefix} {@prefix_end} {@second_color}You're not in a gang!"
+                    else:
+                        if {clans::%{clans::%player%}%::owner} is the player:
+                            send "{@prefix} {@prefix_end} {@second_color}You cannot leave your own gang! Use /gang disband!"
+                        else:
+                            send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}has left the gang!"
+                            loop {members::%{clans::%{clans::%player%}%::owner}%::*}:
+                                set {_b} to "%loop-value%" parsed as an offline player
+                                send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}has left the gang!" to {_b}
+                                remove the player from {members::%{clans::%{clans::%player%}%::owner}%::*}
+                                delete {clans::%player%}
+                                delete {clanchat::%player%}
+                if arg-1 is "invite":
+                    if {clans::%player%} is not set:
+                        send "{@prefix} {@prefix_end} {@second_color}You're not in a gang!"
+                    else:
+                        if {clans::%{clans::%player%}%::owner} is not the player:
+                            send "{@prefix} {@prefix_end} {@second_color}You're not the owner of the gang!"
+                        else:
+                            if arg-2 is set:
+                                set {_b} to arg-2 parsed as an offline player
+                                if {invited::%{clans::%player%}%::%arg-2%} is not set:
+                                    send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}invited you to join {@main_color}%{clans::%player%}%{@second_color}!" to {_b}
+                                    set {invited::%{clans::%player%}%::%arg-2%} to true
+                                    loop {members::%player%::*}:
+                                        set {_b2} to "%loop-value%" parsed as an offline player
+                                        send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}invited {@main_color}%arg-2% {@second_color}to the gang!" to {_b2}
+                                else:
+                                    set {_b} to arg-2 parsed as an offline player
+                                    send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}revoked your invite." to {_b}
+                                    delete {invited::%{clans::%player%}%::%arg-2%}
+                                    loop {members::%player%::*}:
+                                        set {_b2} to "%loop-value%" parsed as an offline player
+                                        send "{@prefix} {@prefix_end} {@main_color}%player% {@second_color}revoked {@main_color}%arg-2%{@second_color}'s invite." to {_b2}
+                            else:
+                                send "{@prefix} {@prefix_end} {@second_color}/clan invite <player>"
