@@ -1,0 +1,62 @@
+# BedrockMiners Shop.sk
+command /shop:
+    trigger:
+        set {_gui} to a new chest inventory with 6 row with name "&cShop"
+        set slot 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52 and 53 of {_gui} to black stained glass pane
+        set slot 10 of {_gui} to netherite block named "&cOres"
+        open {_gui} to player
+
+command /shopunob:
+    permission: staff.shop, staff.*
+    trigger:
+        set {_gui} to a new chest inventory with 6 row with name "&cShop &7>> &cUnobtainables"
+        set slot 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 and 52 of {_gui} to black stained glass pane
+        set slot 53 of {_gui} to red stained glass pane named "&cBack"
+        set slot 10 of {_gui} to elytra named "<##4b5d5e>Elytra" with lore "&a$750,000"
+        set slot 11 of {_gui} to nether star named "<##c2c2c2>Nether Star" with lore "&a$1,500,000"
+        set slot 12 of {_gui} to beacon named "<##4d75b0>Beacon" with lore "&a$1,750,000"
+        open {_gui} to player
+ 
+on inventory click:
+    if name of event-inventory is "&cShop":
+        if index of event-slot = 10:
+            cancel event
+            make player execute command "/shopunob"
+        if index of event-slot = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 or 52:
+            cancel event
+    if name of event-inventory is "&cShop &7>> &cUnobtainables":
+        if index of event-slot = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 or 52:
+            cancel event
+        if index of event-slot = 53:
+            make player execute command "/shop"
+        # eeeeeeeeeeeee
+        if index of event-slot = 10:
+            cancel event
+            if player's balance is greater or equal to 750,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 750,000 from player's balance
+                stop
+            if player's balance is less than 750,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
+        if index of event-slot = 11:
+            cancel event
+            if player's balance is greater or equal to 1,500,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 1,500,000 from player's balance
+                stop
+            if player's balance is less than 1,500,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
+        if index of event-slot = 12:
+            cancel event
+            if player's balance is greater or equal to 1,750,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 1,750,000 from player's balance
+                stop
+            if player's balance is less than 1,750,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
