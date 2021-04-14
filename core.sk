@@ -1,0 +1,278 @@
+on first join:
+    add 1 to {totaljoins}
+    set the join message to "&a+ &7%player% &7&o(##%{totaljoins}%)"
+    wait 1 tick
+    teleport player to location at -50, 7, -50 in world "Bedrock"
+    make console execute command "/lp user %player% parent set default"
+
+every second:
+    if {boosts} is not set:
+        set {boosts} to 0
+    loop all players:
+        if {boosts.%loop-player's uuid%} is not set:
+            set {boosts.%loop-player's uuid%} to 0
+        if {votes.%loop-player's uuid%} is not set:
+            set {votes.%loop-player's uuid%} to 0
+
+on join:
+    set the join message to "&a+ &7%player%"
+
+on quit:
+    set the quit message to "&c- &7%player%"
+
+on chat:
+    set the chat format to "%player's prefix% %player%&7: &f%message%"
+
+every second:
+    loop all players:
+        set loop-player's tablist name to "%loop-player's prefix% %loop-player%"
+
+command /spawn:
+    trigger:
+        send "&c&l>> &7Teleporting..."
+        teleport player to location at -50, 7, -50 in world "Bedrock"
+
+on respawn:
+    wait 1 tick
+    teleport player to location at -50, 7, -50 in world "Bedrock"
+
+command /shop:
+    trigger:
+        set {_gui} to a new chest inventory with 6 row with name "&cShop"
+        set slot 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51, 52 and 53 of {_gui} to black stained glass pane
+        set slot 10 of {_gui} to netherite block named "&cOres"
+        open {_gui} to player
+
+command /shopunob:
+    permission: staff.shop, staff.*
+    trigger:
+        set {_gui} to a new chest inventory with 6 row with name "&cShop &7>> &cUnobtainables"
+        set slot 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 and 52 of {_gui} to black stained glass pane
+        set slot 53 of {_gui} to red stained glass pane named "&cBack"
+        set slot 10 of {_gui} to elytra named "<##4b5d5e>Elytra" with lore "&a$750,000"
+        set slot 11 of {_gui} to nether star named "<##c2c2c2>Nether Star" with lore "&a$1,500,000"
+        set slot 12 of {_gui} to beacon named "<##4d75b0>Beacon" with lore "&a$1,750,000"
+        open {_gui} to player
+ 
+on inventory click:
+    if name of event-inventory is "&cShop":
+        if index of event-slot = 10:
+            cancel event
+            make player execute command "/shopunob"
+        if index of event-slot = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 or 52:
+            cancel event
+    if name of event-inventory is "&cShop &7>> &cUnobtainables":
+        if index of event-slot = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 44, 45, 46, 47, 48, 49, 50, 51 or 52:
+            cancel event
+        if index of event-slot = 53:
+            make player execute command "/shop"
+        # eeeeeeeeeeeee
+        if index of event-slot = 10:
+            cancel event
+            if player's balance is greater or equal to 750,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 750,000 from player's balance
+                stop
+            if player's balance is less than 750,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
+        if index of event-slot = 11:
+            cancel event
+            if player's balance is greater or equal to 1,500,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 1,500,000 from player's balance
+                stop
+            if player's balance is less than 1,500,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
+        if index of event-slot = 12:
+            cancel event
+            if player's balance is greater or equal to 1,750,000:
+                send "&c&l>> &7Transaction complete!"
+                give player elytra
+                take 1,750,000 from player's balance
+                stop
+            if player's balance is less than 1,750,000:
+                send "&c&l>> &7Transaction failed!"
+                stop
+
+# GAMEMODE CHANGER
+every 1 second:
+    loop all players:
+        set {_maxplayers} to placeholder "server_max_players" from loop-player
+        set {_prefix} to "%colored loop-player's prefix%"
+        replace all "[" and "]" with "" in {_prefix}
+        wipe loop-player's sidebar
+        set name of sidebar of loop-player to "&3&lBedrock&b&lMiners"
+        set score "&8" in sidebar of loop-player to 8
+        set score "&7&oRank: %{_prefix}%" in sidebar of loop-player to 7
+        set score "&7&oVotes: &6%{votes.%loop-player's uuid%}%" in sidebar of loop-player to 6
+        set score "&5" in sidebar of loop-player to 5
+        set score "&7&oOnline: &6%amount of players%&7/&6%{_maxplayers}%" in sidebar of loop-player to 4
+        set score "&7&oBoosts: &6%{boosts}%&7/&6%{boosts.%loop-player's uuid%}%" in sidebar of loop-player to 3
+        set score "&0" in sidebar of loop-player to 1
+
+command /broadcast [<string>]:
+    permission: staff.alert, staff.*
+    aliases: bc, announce
+    trigger:
+        if arg 1 is not set:
+            send "&cNo arguments!"
+        if arg 1 is set:
+            loop all players:
+                send "&8&l(&3&lB&b&lM&8&l) &3%arg-1%" to loop-player
+
+
+
+command /vbm [<string>] [<player>]:
+    permission: staff.vbm, staff.*
+    trigger:
+        if arg 1 is "vote":
+            if arg 2 is set:
+                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bvoted! They recieved their rewards."
+                add 1 to {votes.%arg-2's uuid%}
+                add 750 to player's balance
+        if arg 1 is "booster":
+            if arg 2 is set:
+                broadcast "&8&l(&3&lB&b&lM&8&l) &3%arg-2% &bboosted! They recieved their rewards."
+                add 1 to {boosts.%arg-2's uuid%}
+                add 1 to {boosts}
+                add 75000 to player's balance
+
+command /rules:
+    trigger:
+        send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &3&lRUL&b&lES &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----"
+        send "&3• No swearing/cursing"
+        send "&3• No racism/sexism"
+        send "&3• No bullying/harrassment"
+        send "&3• No advertising"
+        send "&3• No begging"
+        send "&3• No impersonation of any member or staff member"
+        send "&3• No inappropriate nicknames, such as direct racism caused by one's religion, culture, and so on. &b&lBOOSTERS ONLY COMMAND"
+        send "&f"
+        send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &3&lPVP RUL&b&lES &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----"
+        send "&3• Any sort of killing as a player walks out of the spawn region will not be prohibited"
+        send "&3• Any hacked clients of any type will not be tolerated"
+        send "&3• Using the exploitation of bugs or glitches to your advantage will lead to an instant ban"
+        send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &8&l(&3&lB&b&lM&8&l) &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----"
+
+# to do list completed
+                    
+command /rename [<string>] :
+    permission: staff.rename, staff.*
+    trigger:
+        if arg 1 is not set:
+            send "&cUsage: &6/rename <name>"
+        if arg 1 is set:
+            set name of player's held item to colored arg-1
+
+#----------------------
+
+# SUMO CODE
+
+every 0.1 seconds:
+    loop all players:
+        if loop-player is in region "Sumo":
+            if {sumoevent} is set:
+                if block at loop-player is water:
+                    make console execute command "/broadcast %loop-player% has been eliminated from the Sumo event!"
+                    make loop-player execute command "/spawn"
+            else:
+                stop
+
+command /sumo [<string>]:
+    permission: staff.sumo, staff.*
+    trigger:
+        if arg 1 is not set:
+            send "&cUsage: &6/sumo <start/stop>"
+        if arg 1 is "start":
+            if {sumoevent} is set:
+                send "&cIf you would like to stop the event, use /sumo stop."
+            else:
+                send "&aEvent starting soon!"
+                make console execute command "/broadcast Sumo event starting in 1 minute! Type /sumojoin to join!"
+                set {sumoevent} to true
+                delete {sumoplayerlist::*}
+                delete {sumoplayers}
+        if arg 1 is "stop":
+
+            if {sumoevent} is not set:
+                send "&cIf you would like to start the event, use /sumo start."
+            else:
+
+                set {_loc} to location at -50, 7, -50 in world "Bedrock"
+
+                make console execute command "/broadcast Sumo event force stopped by an admin!"
+                delete {sumoevent}
+                delete {sumoplayers}
+
+                loop all players:
+                    delete {sumojoined.%loop-player's uuid%}
+
+                loop all players in radius 35 around location at 1000, 20, 1000 in world "Bedrock":
+                    teleport loop-player to {_loc}
+
+
+command /sumojoin:
+    trigger:
+        if {sumoevent} is set:
+            if {sumojoined.%player's uuid%} is set:
+                send "&c&l>> &7You are already in this event!"
+                stop
+            else:
+                send "&c&l>> &7Teleporting..."
+                teleport player at location 1017, 25, 1000 in world "Bedrock"
+                add 1 to {sumoplayers}
+                add player to {sumoplayerlist::*}
+                set {sumojoined.%player's uuid%} to true
+                make console execute command "/broadcast %player% joined the Sumo event! &7&o(%{sumoplayers}% player(s))"
+        else:
+            send "&cThere is no active event!"
+
+on place:
+    add block to {placedblocks::*}
+
+command /blocks:
+    permission: staff.blocks, staff.*
+    trigger:
+        send "%{placedblocks::*}%"
+
+command /blocksreset:
+    permission: staff.blocks, staff.*
+    trigger:
+        send "&c&l>> &7All placed blocks reset."
+        loop blocks in radius 350 around player:
+            set {_block} to a random element out of blocks in radius 350 of player
+            if {_block} is {placedblocks::*}:
+                set block {_block} to air
+        stop
+
+command /discord:
+    trigger:
+        json("%player%", "&a&lCLICK HERE||url:https://discord.gg/vMkjKWttNW")
+
+command /warn [<offline player>] [<string>]:
+    permission: staff.warn, staff.*
+    trigger:
+        if arg 1 is not set:
+            send "&a"
+            send " &d&o• &d/warn <player> <reasoning> &7&oWarns a player due to bad acts"
+            send "&a"
+        if arg 1 is a player:
+            if arg 1 is offline:
+                send " &d&o• This player is offline!"
+            if arg 1 is online:
+                if arg 2 is not set:
+                    send " &d&o• Please specify some arguments for %arg-1%'s warn reason!"
+                if arg 2 is set:
+                    make console execute command "/broadcast %arg-1% has been warned due to: %arg-2%"
+                    send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &3&lNOT&b&lICE &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----" to arg-1
+                    send "&fYou have been warned by an admin due to &b%arg-2%&f." to arg-1
+                    send "&l<##34a4eb>&l----<##3471eb>&l----<##5334eb> &8&l(&3&lB&b&lM&8&l) &l<##5334eb>----&l<##3471eb>----&l<##34a4eb>----" to arg-1
+                    add 1 to {warns.%arg-1's uuid%}
+
+on load:
+    broadcast "&b&lCORE &f| &bReloading."
+#----------------------
