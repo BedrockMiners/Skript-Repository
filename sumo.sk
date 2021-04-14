@@ -1,0 +1,62 @@
+#----------------------
+
+# Sumo.sk for BedrockMiners
+
+every 0.1 seconds:
+    loop all players:
+        if loop-player is in region "Sumo":
+            if {sumoevent} is set:
+                if block at loop-player is water:
+                    make console execute command "/broadcast %loop-player% has been eliminated from the Sumo event!"
+                    make loop-player execute command "/spawn"
+            else:
+                stop
+
+command /sumo [<string>]:
+    permission: staff.sumo, staff.*
+    trigger:
+        if arg 1 is not set:
+            send "&cUsage: &6/sumo <start/stop>"
+        if arg 1 is "start":
+            if {sumoevent} is set:
+                send "&cIf you would like to stop the event, use /sumo stop."
+            else:
+                send "&aEvent starting soon!"
+                make console execute command "/broadcast Sumo event starting in 1 minute! Type /sumojoin to join!"
+                set {sumoevent} to true
+                delete {sumoplayerlist::*}
+                delete {sumoplayers}
+        if arg 1 is "stop":
+
+            if {sumoevent} is not set:
+                send "&cIf you would like to start the event, use /sumo start."
+            else:
+
+                set {_loc} to location at -50, 7, -50 in world "Bedrock"
+
+                make console execute command "/broadcast Sumo event force stopped by an admin!"
+                delete {sumoevent}
+                delete {sumoplayers}
+
+                loop all players:
+                    delete {sumojoined.%loop-player's uuid%}
+
+                loop all players in radius 35 around location at 1000, 20, 1000 in world "Bedrock":
+                    teleport loop-player to {_loc}
+
+
+command /sumojoin:
+    trigger:
+        if {sumoevent} is set:
+            if {sumojoined.%player's uuid%} is set:
+                send "&c&l>> &7You are already in this event!"
+                stop
+            else:
+                send "&c&l>> &7Teleporting..."
+                teleport player at location 1017, 25, 1000 in world "Bedrock"
+                add 1 to {sumoplayers}
+                add player to {sumoplayerlist::*}
+                set {sumojoined.%player's uuid%} to true
+                make console execute command "/broadcast %player% joined the Sumo event! &7&o(%{sumoplayers}% player(s))"
+        else:
+            send "&cThere is no active event!"
