@@ -1,0 +1,6 @@
+# Warps player to shop, simple and easy
+
+command /shop:
+    trigger:
+        message "&c&l>>&7 Teleporting..."
+                Execute /warp shop
