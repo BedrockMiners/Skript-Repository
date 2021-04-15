@@ -1,0 +1,31 @@
+##############################
+#                            #
+#  OPTIONS FOR OTHER SKRIPTS #
+#                            #
+##############################
+
+# By Aspiired
+
+# These are basically options for future skripts like, prefix so you can copy and paste them into future skripts
+
+options:
+    prefix: &c&l>>
+    main_col: &7
+    second_col: &c
+    bm_long: &3&lBedrock&b&lMiners
+    bm_short: &3&lB&b&lM
+    player_names: &a
+    no_args_alternate: &d&o
+
+command /options:
+    permissions: staff.options, staff.*
+    trigger:
+        send "{@prefix} {@main_col}All options in chronological order"
+        send "&f"
+        send "{@main_col} Main Color"
+        send "{@second_col} Secondary Color"
+        send "{@bm_long} BM Long"
+        send "{@bm_short} BM Short"
+        send "{@player_names} Player Names"
+        send "{@no_args_alternate} No args alternate"
+
