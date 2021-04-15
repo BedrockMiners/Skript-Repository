@@ -1,0 +1,28 @@
+on death:
+	if damage was caused by void:
+		stop
+	else:
+		set the death message to "&c&l» &7%victim% died."
+		force victim to respawn
+		add 1 to {deaths.%victim's uuid%}
+		stop
+	
+on death:
+	attacker is a player
+	set the death message to "&c&l» &7%victim% died with %attacker%'s help."
+	add 1 to {kills.%attacker's uuid%}
+	add 1 to {deaths.%victim's uuid%}
+	force victim to respawn
+	stop
+		
+on death:
+	if damage was caused by void:
+		if attacker is set:
+			victim is a player
+			broadcast "&c&l» &7%victim% took a visit to the void using %attacker%'s accompany."
+			add 1 to {deaths.%victim's uuid%}
+			add 1 to {kills.%attacker's uuid%}
+		else:
+			victim is a player
+			broadcast "&c&l» &7%victim% took a visit to the void but no success."
+			add 1 to {deaths.%victim's uuid%}
